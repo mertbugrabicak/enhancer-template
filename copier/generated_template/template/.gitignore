@@ -39,3 +39,4 @@ sbomer-platform/
 target/
 
 tmp/
+copier/generated_template/
