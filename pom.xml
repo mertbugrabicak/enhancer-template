@@ -22,6 +22,7 @@
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
         <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
+        <version.cyclonedx>9.1.0-patch</version.cyclonedx>
     </properties>
 
     <dependencyManagement>
@@ -148,7 +149,29 @@
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.cyclonedx</groupId>
+            <artifactId>cyclonedx-core-java</artifactId>
+            <version>${version.cyclonedx}</version>
+        </dependency>
+
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>cyclonedx-java-patch-repo</id>
+            <name>Patches GitHub Repository</name>
+            <url>https://github.com/project-ncl/patches-repository/raw/cyclonedx-core-java-9.1.0-patch/repository/cyclonedx-java/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>

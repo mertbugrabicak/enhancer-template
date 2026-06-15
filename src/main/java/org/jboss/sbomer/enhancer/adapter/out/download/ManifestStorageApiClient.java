@@ -17,10 +17,11 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @RegisterRestClient(configKey = "manifest-storage")
+@Path("/api/v1/storage")
 public interface ManifestStorageApiClient {
 
     @GET
-    @Path("/{path:.+}")
+    @Path("/content/{path:.+}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     InputStream download(@PathParam("path") @Encoded String path);
 

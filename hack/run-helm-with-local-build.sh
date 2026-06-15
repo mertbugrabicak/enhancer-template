@@ -132,11 +132,14 @@ helm upgrade --install sbomer-release "./$PLATFORM_DIR" \
     --set global.includeApiGateway=true \
     --set global.includeS3=true \
     --set global.includeOtelLgtm=true \
-    --set global.includeDependencyTrack=true \
-    --set global.includeDependencyTrackPublisher=true \
     --set example-enhancer-chart.image.repository=localhost/example-enhancer \
     --set example-enhancer-chart.image.tag=latest \
-    --set example-enhancer-chart.image.pullPolicy=Never
+    --set example-enhancer-chart.image.pullPolicy=Never \
+    --set example-enhancer-chart.config.kafka.bootstrapServers=sbomer-release-kafka:9092 \
+    --set example-enhancer-chart.config.kafka.schemaRegistryUrl=http://sbomer-release-apicurio:8080/apis/registry/v2 \
+    --set example-enhancer-chart.config.storage.internalUrl=http://sbomer-release-manifest-storage-service-chart:8080 \
+    --set example-enhancer-chart.config.otel.endpoint=http://sbomer-release-otel-lgtm:4317 \
+    --set example-enhancer-chart.config.otel.protocol=grpc
 
 echo "--- Forcing Rolling Restart to pick up new local image ---"
 kubectl rollout restart deployment -n $NAMESPACE -l app.kubernetes.io/name=example-enhancer-chart || true
