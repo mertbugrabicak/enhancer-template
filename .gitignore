@@ -19,7 +19,7 @@
 *.tar.gz
 *.rar
 
-.idea/
+java-project/.idea/
 *.iml
 *.iws
 
@@ -36,6 +36,8 @@ sbomer-local-dev/
 
 sbomer-platform/
 
-target/
+java-project/target/
 
-tmp/
+.idea/
+
+generated-test-project/

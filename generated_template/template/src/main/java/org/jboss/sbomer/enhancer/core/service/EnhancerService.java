@@ -1,6 +1,5 @@
 package org.jboss.sbomer.enhancer.core.service;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
