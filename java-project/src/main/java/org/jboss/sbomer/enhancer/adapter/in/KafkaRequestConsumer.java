@@ -33,7 +33,6 @@ public class KafkaRequestConsumer {
                 orchestrator.acceptRequest(
                         event.getData().getEnhancementId(),
                         event.getData().getGenerationId(),
-                        event.getData().getGenerationRequest().getTarget().getIdentifier(),
                         event.getData().getEnhancer().getOptions(),
                         event.getData().getInputSbomUrls()
                 );
@@ -57,6 +56,7 @@ public class KafkaRequestConsumer {
                 || event.getData().getEnhancer() == null) {
             return false;
         }
+        // Currently only checks by component name and not version
         return COMPONENT_NAME.equals(event.getData().getEnhancer().getName());
     }
 }

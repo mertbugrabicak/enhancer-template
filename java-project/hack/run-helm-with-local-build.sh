@@ -27,7 +27,6 @@ bash ./hack/build-local-example-enhancer-into-minikube.sh
 
 echo "--- Setting up SBOMer Platform Chart ---"
 
-# Sandbox Defense: Clone the platform chart if missing or lacks git tracking
 if [ ! -d "$PLATFORM_DIR/.git" ]; then
     echo "sbomer-platform git tracking not found. Ensuring clean setup..."
     if [ -d "$PLATFORM_DIR" ]; then
@@ -146,3 +145,4 @@ kubectl rollout restart deployment -n $NAMESPACE -l app.kubernetes.io/name=examp
 
 echo "--- Deployment Complete ---"
 echo "You can check status with: kubectl get pods -n $NAMESPACE"
+echo "You can port-forward with: kubectl port-forward svc/sbomer-release-gateway 8080:8080 -n $NAMESPACE"

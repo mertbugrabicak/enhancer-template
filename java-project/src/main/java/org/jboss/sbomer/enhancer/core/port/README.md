@@ -1,1 +1,0 @@
-Contains definition of ports (interfaces only) which are implemented by adapters.

@@ -55,6 +55,16 @@ spec:
               value: {{ .Values.config.otel.protocol }}
             - name: QUARKUS_OTEL_RESOURCE_ATTRIBUTES
               value: "service.name=sbomer-{% endraw %}example-enhancer{% raw %}"
+
+            - name: SBOMER_ENHANCER_TOOL_NAME
+              value: {{ .Values.config.enhancer.tool.name | quote }}
+            - name: SBOMER_ENHANCER_TOOL_VERSION
+              value: {{ .Values.config.enhancer.tool.version | quote }}
+            - name: SBOMER_ENHANCER_SUPPLIER_NAME
+              value: {{ .Values.config.enhancer.supplier.name | quote }}
+            - name: SBOMER_ENHANCER_SUPPLIER_URLS
+              value: {{ .Values.config.enhancer.supplier.urls | quote }}
+
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

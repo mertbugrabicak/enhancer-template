@@ -27,6 +27,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+// HELLO WORLD TYPE BUSINESS LOGIC FOR THE ENHANCER TEMPLATE - REPLACE WITH YOUR OWN LOGIC
 @ApplicationScoped
 @Slf4j
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class EnhancerService implements EnhancementOrchestrator {
     @Override
     @WithSpan
     @Bulkhead(value = 10)
-    public void acceptRequest(String enhancementId, String generationId, String imageRef, Map<String, String> enhancerOptions, List<String> inputSbomUrls) {
+    public void acceptRequest(String enhancementId, String generationId, Map<String, String> enhancerOptions, List<String> inputSbomUrls) {
 
         Span span = Span.current();
         span.setAttribute("sbom.enhancementId", enhancementId);
@@ -96,8 +97,7 @@ public class EnhancerService implements EnhancementOrchestrator {
             // 1. Dispatch standard status update failure (Updates DB state)
             statusNotifier.notifyStatus(enhancementId, EnhancementStatus.FAILED, "Enhancement failed: " + t.getMessage(), null);
 
-            // We swallow the exception here so Kafka ACKs the original message and
-            // doesn't trap the cluster in an infinite retry loop.
+            // We swallow the exception here so Kafka ACKs the original message and doesn't trap the service
         }
     }
 
@@ -160,7 +160,6 @@ public class EnhancerService implements EnhancementOrchestrator {
     private String extractStoragePath(String urlOrPath) {
         String pattern = "/content/";
         if (urlOrPath.contains(pattern)) {
-            // Returns only: G0QPR36SAFKEWM/bom-linux-amd64.json
             return urlOrPath.substring(urlOrPath.indexOf(pattern) + pattern.length());
         }
         return urlOrPath.startsWith("/") ? urlOrPath.substring(1) : urlOrPath;
@@ -174,11 +173,5 @@ public class EnhancerService implements EnhancementOrchestrator {
                 log.warn("Non-fatal clean up warning: Failed to purge sandbox temp asset: {}", tempFile, e);
             }
         }
-    }
-
-    @Override
-    public void handleUpdate(String enhancementId, EnhancementStatus status, String reason, List<String> resultUrls) {
-        log.debug("Internal lifecycle sync callback received for ID: {}. Status: {}", enhancementId, status);
-        // Implement local state storage orchestration overrides here if needed
     }
 }
