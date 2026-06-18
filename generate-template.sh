@@ -3,6 +3,22 @@
 set -e
 
 # ==========================================
+# Dependency Check
+# ==========================================
+if ! command -v copier &> /dev/null; then
+    echo "⚠️ ERROR: copier is not installed!"
+    echo ""
+    echo "Please install copier using pip:"
+    echo "  pip install -r requirements.txt"
+    echo ""
+    echo "Or manually:"
+    echo "  pip install copier"
+    echo ""
+    echo "For more information, see: https://github.com/copier-org/copier"
+    exit 1
+fi
+
+# ==========================================
 # Dynamic Directory Resolution
 # ==========================================
 # Since the script is in the root, the script's directory IS the root directory
