@@ -33,6 +33,7 @@ public class KafkaRequestConsumer {
                 orchestrator.acceptRequest(
                         event.getData().getEnhancementId(),
                         event.getData().getGenerationId(),
+                        event.getContext().getCorrelationId(),
                         event.getData().getEnhancer().getOptions(),
                         event.getData().getInputSbomUrls()
                 );

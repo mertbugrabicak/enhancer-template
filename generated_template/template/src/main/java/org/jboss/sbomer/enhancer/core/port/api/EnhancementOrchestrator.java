@@ -3,8 +3,6 @@ package org.jboss.sbomer.enhancer.core.port.api;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.sbomer.enhancer.core.domain.EnhancementStatus;
-
 /**
  * Driving Port (API) for the Enhancer Core Domain.
  * <p>
@@ -23,9 +21,10 @@ public interface EnhancementOrchestrator {
      *
      * @param enhancementId The unique ID of the enhancement.
      * @param generationId The unique ID of the generation the enhancement belongs to.
+     * @param correlationId Correlation ID
      * @param enhancerOptions    The parameters passed for the enhancer to use.
      * @param inputSbomUrls      The list of URLs of the SBOMs to enhance.
      */
-    void acceptRequest(String enhancementId, String generationId, Map<String, String> enhancerOptions, List<String> inputSbomUrls);
+    void acceptRequest(String enhancementId, String generationId, String correlationId, Map<String, String> enhancerOptions, List<String> inputSbomUrls);
 
 }

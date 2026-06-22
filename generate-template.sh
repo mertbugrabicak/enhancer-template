@@ -40,6 +40,11 @@ mkdir -p "$TEMPLATE_DIR"
 rm -rf "$GENERATED_PROJECT_DIR"
 mkdir -p "$GENERATED_PROJECT_DIR"
 
+echo "--- 🧹 Cleaning up temporary repositories in java-project ---"
+# Remove platform and contracts folders if they exist in the source directory
+rm -rf "$JAVA_SRC_DIR/sbomer-contracts"
+rm -rf "$JAVA_SRC_DIR/sbomer-platform"
+
 echo "--- 📄 Setting up copier.yml ---"
 if [ -f "$ROOT_DIR/copier.yml" ]; then
     cp "$ROOT_DIR/copier.yml" "$OUTPUT_ROOT/"
@@ -50,11 +55,14 @@ fi
 
 echo "--- 📦 Copying source code from java-project ---"
 # Sync exclusively from the java-project folder
+# Added explicit excludes for the sub-repos as a failsafe
 rsync -a --exclude=".git" \
          --exclude="target" \
          --exclude=".idea" \
          --exclude=".vscode" \
          --exclude="*.iml" \
+         --exclude="sbomer-contracts" \
+         --exclude="sbomer-platform" \
          "$JAVA_SRC_DIR/" "$TEMPLATE_DIR/"
 
 echo "--- 📝 Injecting Copier variables into files ---"

@@ -18,6 +18,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.jboss.sbomer.enhancer.core.domain.EnhancementStatus;
 import org.jboss.sbomer.enhancer.core.port.api.EnhancementOrchestrator;
+import org.jboss.sbomer.enhancer.core.port.spi.FailureNotifier;
 import org.jboss.sbomer.enhancer.core.port.spi.SBOMStorage;
 import org.jboss.sbomer.enhancer.core.port.spi.StatusNotifier;
 
@@ -26,6 +27,8 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.sbomer.enhancer.core.utility.FailureUtility;
+import org.jboss.sbomer.events.common.FailureSpec;
 
 // HELLO WORLD TYPE BUSINESS LOGIC FOR THE ENHANCER TEMPLATE - REPLACE WITH YOUR OWN LOGIC
 @ApplicationScoped
@@ -35,6 +38,7 @@ public class EnhancerService implements EnhancementOrchestrator {
 
     private final SBOMStorage sbomStorage;
     private final StatusNotifier statusNotifier;
+    private final FailureNotifier failureNotifier;
 
     @ConfigProperty(name = "sbomer.enhancer.tool.name", defaultValue = "SBOMer")
     String toolName;
@@ -51,7 +55,7 @@ public class EnhancerService implements EnhancementOrchestrator {
     @Override
     @WithSpan
     @Bulkhead(value = 10)
-    public void acceptRequest(String enhancementId, String generationId, Map<String, String> enhancerOptions, List<String> inputSbomUrls) {
+    public void acceptRequest(String enhancementId, String generationId, String correlationId, Map<String, String> enhancerOptions, List<String> inputSbomUrls) {
 
         Span span = Span.current();
         span.setAttribute("sbom.enhancementId", enhancementId);
@@ -91,12 +95,12 @@ public class EnhancerService implements EnhancementOrchestrator {
             log.info("Successfully enhanced and uploaded {} SBOM assets for Enhancement ID: {}", finalUploadedUrls.size(), enhancementId);
             statusNotifier.notifyStatus(enhancementId, EnhancementStatus.FINISHED, "Enhancement completed successfully", finalUploadedUrls);
 
-        } catch (Throwable t) {
-            log.error("Fatal exception encountered during enhancement processing for ID: {}", enhancementId, t);
-
+        } catch (Exception e) {
+            log.error("Fatal exception encountered during enhancement processing for ID: {}", enhancementId, e);
+            FailureSpec failureSpec = FailureUtility.buildFailureSpecFromException(e);
+            failureNotifier.notify(failureSpec, correlationId, null);
             // 1. Dispatch standard status update failure (Updates DB state)
-            statusNotifier.notifyStatus(enhancementId, EnhancementStatus.FAILED, "Enhancement failed: " + t.getMessage(), null);
-
+            statusNotifier.notifyStatus(enhancementId, EnhancementStatus.FAILED, "Enhancement failed: " + e.getMessage(), null);
             // We swallow the exception here so Kafka ACKs the original message and doesn't trap the service
         }
     }
